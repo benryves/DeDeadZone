@@ -6,7 +6,7 @@
 PROJECT = DeDeadZone
 MCU = atmega8
 F_CPU = 8000000
-TARGET = DeDeadZone.elf
+TARGET = $(PROJECT).elf
 CC = avr-gcc
 AVRDUDE = avrdude -p $(MCU)
 
@@ -25,7 +25,7 @@ ASMFLAGS += -x assembler-with-cpp -Wa,-gdwarf2
 
 ## Linker flags
 LDFLAGS = $(COMMON)
-LDFLAGS +=  -Wl,-Map=DeDeadZone.map
+LDFLAGS +=  -Wl,-Map=$(PROJECT).map
 
 ## Intel Hex file production flags
 HEX_FLASH_FLAGS = -R .eeprom -R .fuse -R .lock -R .signature
@@ -39,7 +39,7 @@ COMPILE = $(CC) $(INCLUDES) $(CFLAGS)
 OBJECTS = main.o
 
 ## Build
-all: $(TARGET) DeDeadZone.elf DeDeadZone.hex size
+all: $(TARGET) $(PROJECT).elf $(PROJECT).hex size
 
 ## Compile
 .c.o:
@@ -68,18 +68,21 @@ size: ${TARGET}
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) DeDeadZone.elf dep DeDeadZone.hex DeDeadZone.eep DeDeadZone.lss DeDeadZone.map
+	-rm -rf $(OBJECTS) $(PROJECT).elf dep $(PROJECT).hex $(PROJECT).eep $(PROJECT).lss $(PROJECT).map
 
 flash: all
-	$(AVRDUDE) -U flash:w:DeDeadZone.hex:i
+	$(AVRDUDE) -U flash:w:$(PROJECT).hex:i
 
 
 fuses:
 ifeq ($(MCU),atmega168)
-	$(AVRDUDE) -U lfuse:w:0xc2:m -U hfuse:w:0xd4:m -U efuse:w:0xf9:m 
+	$(AVRDUDE) -U lfuse:w:0xc2:m -U hfuse:w:0xd4:m -U efuse:w:0xf9:m
 endif	
 ifeq ($(MCU),atmega8)
 	$(AVRDUDE) -U lfuse:w:0x04:m -U hfuse:w:0xd1:m
+endif
+ifeq ($(MCU),atmega48)
+	$(AVRDUDE) -U lfuse:w:0xc2:m -U hfuse:w:0xd5:m -U efuse:w:0xff:m
 endif
 	
 ## Other dependencies

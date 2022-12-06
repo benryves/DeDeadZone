@@ -156,7 +156,14 @@ int main(void) {
 	DIDR0 = 0b00000001; // ADC0D = 1 (disable digital pin buffer 0, not available on ATmega8)
 	#endif
 	
-	ADCSRA |= _BV(ADFR); // Free-running ACD
+	#if defined (ADATE)
+	ADCSRA |= _BV(ADATE); // Free-running ADC
+	#elif defined (ADFR)
+	ADCSRA |= _BV(ADFR); // Free-running ADC
+	#else
+	#error Cannot enable free-running ADC
+	#endif
+
 	ADCSRA |= _BV(ADIE); // Generate ADC interrupts
 	ADCSRA |= _BV(ADSC); // Start ADC
 	
