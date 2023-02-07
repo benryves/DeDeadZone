@@ -84,7 +84,10 @@ endif
 ifeq ($(MCU),atmega48)
 	$(AVRDUDE) -U lfuse:w:0xc2:m -U hfuse:w:0xd5:m -U efuse:w:0xff:m
 endif
-	
+ifeq ($(MCU),atmega328)
+	$(AVRDUDE) -U lfuse:w:0xc2:m -U hfuse:w:0xd5:m -U efuse:w:0xff:m
+endif
+
 ## Other dependencies
 -include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
 
